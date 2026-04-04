@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:uk.trustpilot.com)",
+      "Bash(pip3 --version)",
+      "Bash(pip --version)",
+      "Bash(pip3 install:*)",
+      "Bash(python3 scraper.py --full)",
+      "Bash(python3 categorise.py)",
+      "Bash(python3 -c \":*)",
+      "Bash(gh auth:*)",
+      "Bash(git --version)",
+      "Bash(git config:*)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(chmod +x \"/Users/stevejobs/Desktop/Work Proj/Anima/program that checks trustpilot/run_dashboard.sh\")",
+      "Bash(brew install:*)",
+      "Read(//usr/local/bin/**)",
+      "Read(//opt/homebrew/Cellar/gh/2.89.0/bin/**)",
+      "Read(//Users/stevejobs/bin/**)",
+      "Read(//Applications/**)",
+      "Bash(/opt/homebrew/bin/gh auth:*)",
+      "Bash(/opt/homebrew/bin/gh repo:*)"
+    ]
+  }
+}

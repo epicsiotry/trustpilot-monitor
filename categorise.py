@@ -1,8 +1,8 @@
 """Categorise negative Anima reviews into 7 categories.
 
-Uses keyword/pattern matching that mirrors the manual categorisation methodology
-from Joseph's analysis. For production use, this should be replaced with LLM
-categorisation via the Claude API for higher accuracy.
+Uses keyword/pattern matching to categorise reviews. For production use,
+this should be replaced with LLM categorisation via the Claude API for
+higher accuracy.
 
 Categories:
 1. Interface and technical problems

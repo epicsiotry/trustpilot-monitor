@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Streamlit Dashboard",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["/Users/stevejobs/Desktop/Work Proj/Anima/program that checks trustpilot/run_dashboard.sh"],
+      "port": 8501
+    }
+  ]
+}

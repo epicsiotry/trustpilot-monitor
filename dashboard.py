@@ -2,8 +2,6 @@
 
 A live dashboard tracking Anima Health's Trustpilot reviews, auto-categorising
 negative reviews, and comparing against competitors.
-
-Built by Joseph Cherukara as a follow-up to his Founder's Associate application.
 """
 
 import streamlit as st
@@ -110,12 +108,10 @@ st.markdown("""
 # Anima Trustpilot Sentiment Monitor
 **Automated analysis of patient feedback for [Anima Health](https://animahealth.com)**
 
-This dashboard scrapes Trustpilot reviews, auto-categorises negative feedback,
-tracks sentiment over time, and compares against competitors. Built as a working
-version of [the manual analysis](/3_Anima_Customer_Feedback.pdf) from my
-Founder's Associate application.
+This dashboard scrapes Trustpilot reviews, auto-categorises negative feedback into
+seven categories, tracks sentiment over time, and compares against competitors.
 
-*Built by Joseph Cherukara | Data refreshed from Trustpilot*
+*Data refreshed from Trustpilot*
 
 ---
 """)
@@ -383,9 +379,7 @@ with col_n2:
 # THE KEY CHART: Category trends over time
 st.subheader("Category Trends Over Time")
 st.markdown("""
-*This is the critical chart. Interface complaints grew from ~26% of negative reviews
-in mid-2024 to ~45% in early 2026. Tracking this trend automatically is the core
-value of this dashboard.*
+*How each complaint category's share of negative reviews changes over time.*
 """)
 
 cat_monthly = (
