@@ -1,0 +1,164 @@
+# Anima Trustpilot Sentiment Monitor — Build Spec
+
+## What this is
+
+Build a live dashboard that scrapes Anima Health's Trustpilot reviews, auto-categorises negative reviews using an LLM, tracks sentiment over time, and compares against competitors. The output should be a deployed web dashboard I can share via URL.
+
+## Why this exists
+
+I applied for a Founder's Associate role at Anima Health. As part of my application, I manually analysed 1,265 Trustpilot reviews, categorised 190 of the 240 one-star reviews into seven categories, and wrote a synthesis document. I was rejected before the first round. The role is still open a month later. I want to build a working version of that analysis as an automated tool and send it to the CEO.
+
+This serves three purposes:
+1. Demonstrates I can build, not just write frameworks
+2. Creates something genuinely useful for Anima
+3. Shows I kept thinking about their problems after rejection
+
+## About Anima Health
+
+Anima Health builds workflow software for NHS GP practices. Not an AI scribe or triage chatbot. They've rebuilt the entire clinic operating system: triage, consultations, referrals, prescriptions, patient communications. $14M+ ARR, 450% business growth in 2024, cash flow positive, team of around twenty. Founded by Shun and Rachel. Flat structure, no line managers, no PMs, no EMs.
+
+Their Trustpilot page: https://uk.trustpilot.com/review/patients.animahealth.com
+
+## My manual analysis findings (March 2026)
+
+### Overall numbers
+- 4.3/5 stars from 1,265 reviews
+- 70% five-star (883 reviews)
+- 8% four-star (100 reviews)
+- 2% three-star (30 reviews)
+- 1% two-star (12 reviews)
+- 19% one-star (240 reviews)
+- Distribution is polarised: most people love it or hate it, the middle barely exists
+
+### Competitor Trustpilot pages (scrape these too)
+- eConsult: https://uk.trustpilot.com/review/econsult.net (1.3/5 from 495 reviews)
+- PATCHS: https://uk.trustpilot.com/review/www.patchs.ai (4.5/5 from 2,128 reviews)
+
+### My seven categories for negative reviews
+
+I categorised 190 of 240 one-star reviews. Here are the categories with descriptions detailed enough for an LLM to replicate the categorisation:
+
+**1. Interface and technical problems (56 reviews, 29.5%)**
+Crashes, login failures, no back button, data loss on timeout, confusing navigation, sessions expiring mid-form, system errors, inability to go back and correct information, settings not saved, multiple restarts required. This is about the software breaking or being poorly designed at the interaction level.
+
+Example reviews:
+- "Really poor user interface...after that there is no way back and no help available."
+- "Cumbersome system, no settings saved, poor interface."
+- "System creates false treatment records, incorrect provider assignments, and pointless repetitive forms."
+
+**2. Questionnaire burden (31 reviews, 16.3%)**
+Form is too long, asks irrelevant questions, times out before completion, requires answering questions that feel unnecessary for the patient's issue. One patient counted 39 questions when all they wanted was an appointment. The complaint is about the volume and relevance of questions, not about the interface breaking.
+
+Example reviews:
+- "Online booking service is long and complex, but ease of not being on phone 30+ in queue is slightly helpful."
+- "Complex form-filling process as stressful."
+- "Lengthy form completion, irrelevant questions, time pressure, missed appointment notification."
+
+**3. System unavailability (28 reviews, 14.7%)**
+System shuts down when at capacity, sometimes by 8:02am. Forces patients to reapply the next day. Recreates the exact 8am phone scramble that Anima was supposed to eliminate. The complaint is about not being able to access the system at all, not about the experience once inside it.
+
+Example reviews:
+- "By 9:20am already closed. No appointments. Scandalous."
+- "The app becomes unavailable when full of earlier requests, forcing patients to reapply the next day rather than functioning 24/7."
+- "Once the appointments have gone the whole site becomes unavailable until the next session."
+
+**4. Digital exclusion (26 reviews, 13.7%)**
+Elderly, disabled, or digitally excluded users who cannot use the digital pathway. Patients who want or need a phone alternative but don't have one. The complaint is about the system being inaccessible to certain populations, not about it being broken for everyone.
+
+Example reviews:
+- "I'm disabled and had a message saying I need to answer questions from my surgery but unable to do so on this platform, now seriously stressed out and can't get through to my surgery."
+- "Confusing interface causes distress to elderly users; multiple required requests frustrate patients."
+- "Elderly patients who struggle with the online system are receiving substandard patient care."
+
+**5. Triage misdirection (18 reviews, 9.5%)**
+System's clinical triage logic sends patients to the wrong place: recommending 999 or A&E for non-emergencies, refusing to let patients book for certain symptoms, misidentifying conditions entirely. One patient with hip pain was told he had a tummy problem. Another was told to call 999 twice for a non-emergency. This is about the clinical algorithm making bad decisions, not about the interface or access.
+
+Example reviews:
+- "Terrible system extremely unhelpful, generic and signposting inappropriately."
+- "Every time I try and book a face-to-face appointment they book me a phone appointment!"
+
+**6. Other (19 reviews, 10%)**
+Privacy concerns, data accuracy issues, wrong appointment type booked, 2pm booking cutoffs requiring time off work, miscellaneous complaints that don't fit the other categories.
+
+**7. Practice capacity (12 reviews, 6.3%)**
+Genuinely about the GP practice being full, not the software. The patient couldn't get an appointment because the practice had no availability. Anima delivered the request correctly but takes the blame because it's the visible surface. Important to separate these from software complaints.
+
+Example reviews:
+- "Stuck on Monday, unable to book for two months."
+
+### Critical finding: interface complaints are getting WORSE
+
+Interface complaints represented 26% of negative reviews from mid-2024 but 45% of negative reviews from early 2026. This trend is worsening as the user base expands. The dashboard should track this over time automatically.
+
+### Separating software complaints from practice complaints
+
+Many negative reviews blame Anima for things the GP practice controls (e.g. no available appointments). The LLM categorisation should include a binary field: "software_complaint" (true/false) to distinguish these. Only 6.3% of one-star reviews are genuinely about practice capacity rather than the software.
+
+## What to build
+
+### 1. Scraper
+- Scrape all existing reviews from Anima's Trustpilot page
+- Also scrape eConsult and PATCHS for competitor comparison
+- For each review capture: star rating, date posted, reviewer name/handle, review text, any company reply, review URL
+- Store in SQLite database
+- Make it re-runnable (daily or weekly) to pull only new reviews since last scrape
+- Handle Trustpilot's anti-scraping measures properly (rate limiting, headers, etc.)
+- If Trustpilot blocks scraping, consider their API or alternative approaches
+
+### 2. LLM categorisation
+- For every review with 1-2 stars, use Claude API (or OpenAI API) to categorise into my seven categories above
+- Also classify each review as "software_complaint: true/false"
+- Include a "confidence" score from the LLM
+- Store categorisation alongside raw review data in the database
+- Use a system prompt that includes the category definitions and example reviews above so the LLM replicates my manual methodology
+- Make it possible to compare LLM categorisation against my manual categorisation for validation
+
+### 3. Dashboard
+Build a web dashboard (Streamlit, Plotly Dash, or static HTML — whatever deploys easiest) showing:
+
+**Overview panel:**
+- Current overall rating and total review count for Anima
+- Star distribution (pie or bar chart)
+- Competitor comparison: Anima vs eConsult vs PATCHS current ratings
+
+**Trends over time:**
+- Monthly rolling average star rating for Anima (and competitors if possible)
+- Monthly star distribution (are 1-star reviews growing as a share?)
+- Monthly review volume
+
+**Negative review analysis:**
+- Category breakdown (bar chart showing % of negative reviews in each of 7 categories)
+- Category trends over time (line chart showing each category's share month by month — this is the key chart that shows interface complaints growing from 26% to 45%)
+- Software vs practice complaint ratio over time
+- Recent negative reviews table with their auto-assigned categories
+
+**Individual review explorer:**
+- Searchable/filterable table of all reviews
+- Filter by star rating, category, date range, software vs practice complaint
+
+### 4. Deployment
+- Deploy somewhere free or cheap so I can share a live URL
+- Options: Streamlit Cloud, Railway, Render, Vercel, GitHub Pages
+- The URL needs to work when I send it to Anima's CEO
+
+### 5. Nice to have (if time permits)
+- Alerting: flag if any category spikes above its historical average in a new batch
+- Word cloud or common phrases per category
+- Sentiment score (beyond just star rating) using the review text
+- Weekly email digest of new reviews and their categories
+
+## Technical notes
+- I'm not a software engineer but I can follow instructions and debug with help
+- I have access to Claude API (can provide key)
+- Python is fine, keep dependencies minimal
+- The whole thing should be clean enough that I could share the GitHub repo and it would reflect well on me
+
+## Build order
+1. Scraper — get raw data flowing
+2. Database schema — store everything properly
+3. LLM categorisation — classify the negative reviews
+4. Dashboard — visualise everything
+5. Deployment — get a live URL
+6. Automation — set up periodic re-scraping
+
+Start with step 1. Let's go.
