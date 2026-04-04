@@ -31,77 +31,73 @@ st.markdown("""
         font-family: 'Inter', sans-serif;
     }
 
-    /* Main title styling */
-    h1 {
-        color: #1A1A2E !important;
-        font-weight: 700 !important;
-        letter-spacing: -0.02em !important;
+    /* Tighten default Streamlit block spacing */
+    .block-container {
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
+        max-width: 1100px !important;
     }
 
-    /* Section headers in Anima purple */
+    /* Section headers — clean, no underline */
     h2 {
         color: #7C3AED !important;
         font-weight: 600 !important;
+        font-size: 1.6rem !important;
         letter-spacing: -0.01em !important;
-        border-bottom: 2px solid #EDE9FE !important;
-        padding-bottom: 0.4rem !important;
+        margin-top: 2.5rem !important;
+        margin-bottom: 1.2rem !important;
+        border: none !important;
+        padding-bottom: 0 !important;
     }
 
     h3 {
-        color: #4A4A6A !important;
-        font-weight: 500 !important;
+        color: #1A1A2E !important;
+        font-weight: 600 !important;
+        font-size: 1.05rem !important;
+        margin-bottom: 0.8rem !important;
     }
 
-    /* Metric cards */
+    /* Metric cards — lighter, cleaner */
     [data-testid="stMetric"] {
-        background: linear-gradient(135deg, #F8F7FF 0%, #EDE9FE 100%);
-        border: 1px solid #E5E1F5;
-        border-radius: 12px;
-        padding: 1rem 1.2rem;
-        box-shadow: 0 1px 3px rgba(124, 58, 237, 0.06);
+        background: #FAFAFF;
+        border: 1px solid #EDE9FE;
+        border-radius: 10px;
+        padding: 1.1rem 1.3rem;
     }
 
     [data-testid="stMetricLabel"] {
-        color: #6B6B8D !important;
-        font-size: 0.85rem !important;
-        font-weight: 500 !important;
+        color: #7C3AED !important;
+        font-size: 0.72rem !important;
+        font-weight: 600 !important;
         text-transform: uppercase !important;
-        letter-spacing: 0.04em !important;
+        letter-spacing: 0.06em !important;
     }
 
     [data-testid="stMetricValue"] {
         color: #1A1A2E !important;
         font-weight: 700 !important;
-    }
-
-    /* Dividers */
-    hr {
-        border-color: #EDE9FE !important;
+        font-size: 1.8rem !important;
     }
 
     /* Dataframe styling */
     [data-testid="stDataFrame"] {
-        border: 1px solid #E5E1F5;
-        border-radius: 12px;
+        border: 1px solid #EDE9FE;
+        border-radius: 10px;
         overflow: hidden;
-    }
-
-    /* Sidebar and inputs */
-    .stSelectbox, .stMultiSelect, .stTextInput {
-        border-radius: 8px;
-    }
-
-    /* Password page centering */
-    .password-container {
-        max-width: 400px;
-        margin: 10vh auto;
-        text-align: center;
     }
 
     /* Plotly chart containers */
     [data-testid="stPlotlyChart"] {
-        border-radius: 12px;
-        overflow: hidden;
+        border-radius: 10px;
+    }
+
+    /* Remove Streamlit branding footer */
+    footer {visibility: hidden;}
+    #MainMenu {visibility: hidden;}
+
+    /* Tidy up input widgets */
+    .stSelectbox > div, .stMultiSelect > div, .stTextInput > div {
+        border-radius: 8px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -156,6 +152,16 @@ CATEGORY_ORDER = [
 ]
 
 
+CHART_LAYOUT = dict(
+    plot_bgcolor="white",
+    paper_bgcolor="white",
+    font=dict(family="Inter, sans-serif", color="#4A4A6A", size=12),
+    margin=dict(l=40, r=20, t=30, b=40),
+    xaxis=dict(gridcolor="#F0ECF9", linecolor="#EDE9FE", zeroline=False),
+    yaxis=dict(gridcolor="#F0ECF9", linecolor="#EDE9FE", zeroline=False),
+)
+
+
 @st.cache_data(ttl=300)
 def load_data():
     conn = sqlite3.connect(DB_PATH)
@@ -194,16 +200,15 @@ anima_neg = anima[anima["rating"] <= 2]
 
 # --- Header ---
 st.markdown("""
-<div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.5rem;">
-    <span style="font-size: 2.2rem; font-weight: 700; color: #1A1A2E; letter-spacing: -0.03em;">Trustpilot Sentiment Monitor</span>
+<div style="margin-bottom: 2rem;">
+    <p style="font-size: 1.8rem; font-weight: 700; color: #1A1A2E; letter-spacing: -0.03em; margin-bottom: 0.2rem; line-height: 1.2;">Trustpilot Sentiment Monitor</p>
+    <p style="color: #6B6B8D; font-size: 0.95rem; margin: 0 0 0.15rem 0;">
+        Automated analysis of patient feedback for <a href="https://animahealth.com" style="color: #7C3AED; text-decoration: none; font-weight: 500;">Anima Health</a>
+    </p>
+    <p style="color: #A0A0B8; font-size: 0.8rem; margin: 0;">
+        Reviews scraped daily &middot; Negative feedback auto-categorised into seven complaint frameworks
+    </p>
 </div>
-<p style="color: #6B6B8D; font-size: 1.05rem; margin-top: 0; margin-bottom: 0.3rem;">
-    Automated analysis of patient feedback for <a href="https://animahealth.com" style="color: #7C3AED; text-decoration: none; font-weight: 500;">Anima Health</a>
-</p>
-<p style="color: #94A3B8; font-size: 0.85rem; margin-top: 0;">
-    Reviews scraped daily from Trustpilot &middot; Negative feedback auto-categorised into seven complaint frameworks
-</p>
-<hr style="border: none; border-top: 2px solid #EDE9FE; margin-top: 1rem;">
 """, unsafe_allow_html=True)
 
 # ============================================================
@@ -266,17 +271,7 @@ if anima_stats:
         },
     )
     fig.update_traces(texttemplate="%{text}%", textposition="outside")
-    fig.update_layout(
-        showlegend=False,
-        yaxis_title="Number of Reviews",
-        xaxis_title="",
-        height=350,
-        plot_bgcolor="white",
-        paper_bgcolor="white",
-        font=dict(family="Inter, sans-serif", color="#4A4A6A"),
-    )
-    fig.update_xaxes(gridcolor="#EDE9FE", linecolor="#E5E1F5")
-    fig.update_yaxes(gridcolor="#EDE9FE", linecolor="#E5E1F5")
+    fig.update_layout(**CHART_LAYOUT, showlegend=False, yaxis_title="Number of Reviews", xaxis_title="", height=320)
     st.plotly_chart(fig, use_container_width=True)
 
 st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
@@ -304,12 +299,7 @@ with col_t1:
             y="avg_rating",
             markers=True,
         )
-        fig.update_layout(
-            yaxis_title="Average Rating",
-            yaxis_range=[1, 5],
-            xaxis_title="Month",
-            height=350,
-        )
+        fig.update_layout(**CHART_LAYOUT, yaxis_title="Average Rating", yaxis_range=[1, 5], xaxis_title="", height=320)
         fig.update_traces(line_color="#7C3AED")
         st.plotly_chart(fig, use_container_width=True)
 
@@ -322,11 +312,7 @@ with col_t2:
     )
     if not monthly_vol.empty:
         fig = px.bar(monthly_vol, x="year_month", y="total")
-        fig.update_layout(
-            yaxis_title="Number of Reviews",
-            xaxis_title="Month",
-            height=350,
-        )
+        fig.update_layout(**CHART_LAYOUT, yaxis_title="Number of Reviews", xaxis_title="", height=320)
         fig.update_traces(marker_color="#7C3AED")
         st.plotly_chart(fig, use_container_width=True)
 
@@ -357,12 +343,7 @@ if not monthly_stars.empty:
         },
         groupnorm="percent",
     )
-    fig.update_layout(
-        yaxis_title="% of Reviews",
-        xaxis_title="Month",
-        legend_title="Rating",
-        height=350,
-    )
+    fig.update_layout(**CHART_LAYOUT, yaxis_title="% of Reviews", xaxis_title="", legend_title="Rating", height=320)
     st.plotly_chart(fig, use_container_width=True)
 
 st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
@@ -398,12 +379,7 @@ with col_n1:
             color_discrete_map=CATEGORY_COLORS,
         )
         fig.update_traces(texttemplate="%{text}%", textposition="outside")
-        fig.update_layout(
-            showlegend=False,
-            xaxis_title="Number of Reviews",
-            yaxis_title="",
-            height=400,
-        )
+        fig.update_layout(**CHART_LAYOUT, showlegend=False, xaxis_title="Number of Reviews", yaxis_title="", height=380)
         st.plotly_chart(fig, use_container_width=True)
 
 with col_n2:
@@ -414,10 +390,10 @@ with col_n2:
         fig = px.pie(
             values=[sw, pr],
             names=["Software complaint", "Practice complaint"],
-            color_discrete_sequence=["#E53E3E", "#718096"],
+            color_discrete_sequence=["#7C3AED", "#E2E0EA"],
             hole=0.4,
         )
-        fig.update_layout(height=400)
+        fig.update_layout(**CHART_LAYOUT, height=380)
         st.plotly_chart(fig, use_container_width=True)
 
 # THE KEY CHART: Category trends over time
@@ -449,12 +425,7 @@ if not cat_monthly.empty:
             markers=True,
             color_discrete_map=CATEGORY_COLORS,
         )
-        fig.update_layout(
-            yaxis_title="% of Negative Reviews",
-            xaxis_title="Month",
-            legend_title="Category",
-            height=450,
-        )
+        fig.update_layout(**CHART_LAYOUT, yaxis_title="% of Negative Reviews", xaxis_title="", legend_title="Category", height=400)
         st.plotly_chart(fig, use_container_width=True)
 
 st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
