@@ -1,4 +1,4 @@
-"""Categorise negative Anima reviews into 7 categories.
+"""Categorise negative Anima reviews into 6 categories.
 
 Uses keyword/pattern matching to categorise reviews. For production use,
 this should be replaced with LLM categorisation via the Claude API for
@@ -7,11 +7,10 @@ higher accuracy.
 Categories:
 1. Interface and technical problems
 2. Questionnaire burden
-3. System unavailability
+3. Access and availability
 4. Digital exclusion
 5. Triage misdirection
 6. Other
-7. Practice capacity
 """
 
 import sqlite3
@@ -104,7 +103,7 @@ CATEGORIES = {
         (r"not\s*enough\s*character", 4),
         (r"waded?\s*through", 2),
     ],
-    "System unavailability": [
+    "Access and availability": [
         (r"closed?\s*(by|at|within)\s*\d", 5),
         (r"(8|9|10)\s*:?\s*\d{0,2}\s*(am)?\s*(already\s*)?(closed|full|shut)", 5),
         (r"full\s*(capacity|by)", 4),
@@ -134,6 +133,14 @@ CATEGORIES = {
         (r"(not|isn'?t)\s*available\s*(outside|out\s*of|on\s*(the\s*)?weekend)", 4),
         (r"limit(s|ed)?\s*messages?", 3),
         (r"not\s*available\s*on.*weekend", 4),
+        (r"(surgery|practice|gp)\s*(is\s*)?(full|no\s*space|no\s*room)", 4),
+        (r"(wait|waiting)\s*(list|time)?\s*(\d+\s*)?(week|month|day)", 3),
+        (r"(two|2|three|3|four|4)\s*months?\s*(wait|later)", 4),
+        (r"no\s*(available\s*)?appointment.*weeks?", 3),
+        (r"booked\s*(up|solid|out)", 3),
+        (r"(prescription|prescriptions?)\s*(delay|late|slow|taking\s*too\s*long)", 4),
+        (r"referral.*not.*completed", 3),
+        (r"(no\s*)?response.*(\d+\s*)?(day|week)", 2),
     ],
     "Digital exclusion": [
         (r"elder(ly)?", 4),
@@ -181,17 +188,6 @@ CATEGORIES = {
         (r"bladder.*(sick\s*child|blood\s*test|cancer)", 5),
         (r"fobbed\s*off", 2),
     ],
-    "Practice capacity": [
-        (r"(surgery|practice|gp)\s*(is\s*)?(full|no\s*space|no\s*room)", 4),
-        (r"(wait|waiting)\s*(list|time)?\s*(\d+\s*)?(week|month|day)", 3),
-        (r"(two|2|three|3|four|4)\s*months?\s*(wait|later)", 4),
-        (r"no\s*(available\s*)?appointment.*weeks?", 3),
-        (r"booked\s*(up|solid|out)", 3),
-        (r"(staff|receptionist|reception)\s*(are\s*)?(rude|unhelpful|couldn'?t)", 2),
-        (r"(prescription|prescriptions?)\s*(delay|late|slow|taking\s*too\s*long)", 4),
-        (r"referral.*not.*completed", 3),
-        (r"(no\s*)?response.*(\d+\s*)?(day|week)", 2),
-    ],
 }
 
 
@@ -226,9 +222,7 @@ def categorise_review(title, text):
 
     # Determine if this is a software complaint or practice complaint
     software_complaint = True
-    if best_category == "Practice capacity":
-        software_complaint = False
-    elif best_category == "Other":
+    if best_category == "Other":
         # Check if it's about the practice rather than software
         practice_signals = len(re.findall(
             r"(receptionist|reception|staff|doctor|gp|surgery)\s*(was|were|is|are)\s*(rude|unhelpful|useless)",

@@ -134,22 +134,29 @@ if not check_password():
 CATEGORY_COLORS = {
     "Interface and technical problems": "#7C3AED",
     "Questionnaire burden": "#A855F7",
-    "System unavailability": "#3B82F6",
+    "Access and availability": "#3B82F6",
     "Digital exclusion": "#EC4899",
     "Triage misdirection": "#6366F1",
-    "Practice capacity": "#94A3B8",
     "Other": "#CBD5E1",
 }
 
 CATEGORY_ORDER = [
     "Interface and technical problems",
     "Questionnaire burden",
-    "System unavailability",
+    "Access and availability",
     "Digital exclusion",
     "Triage misdirection",
     "Other",
-    "Practice capacity",
 ]
+
+CATEGORY_DEFINITIONS = {
+    "Interface and technical problems": "The app crashes, loses data, or is difficult to use.",
+    "Questionnaire burden": "The form is too long, asks irrelevant questions, or times out before completion.",
+    "Access and availability": "The system closes too early, reaches capacity, or appointments aren't available when needed.",
+    "Digital exclusion": "Patients who aren't comfortable with technology, or can't access digital tools at all.",
+    "Triage misdirection": "The system sends patients to the wrong place, like A&E or 111, when it isn't appropriate.",
+    "Other": "Complaints that don't fit the above categories.",
+}
 
 
 CHART_LAYOUT = dict(
@@ -349,7 +356,25 @@ if not monthly_stars.empty:
 st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
 
 # ============================================================
-# SECTION 3: Negative Review Analysis
+# SECTION 3: Category Definitions
+# ============================================================
+st.header("Category Definitions")
+st.markdown("Each negative review (1 or 2 stars) is placed into one of six categories.")
+
+for cat in CATEGORY_ORDER:
+    colour = CATEGORY_COLORS[cat]
+    definition = CATEGORY_DEFINITIONS[cat]
+    st.markdown(
+        f'<p style="margin: 0.4rem 0; font-size: 0.92rem;">'
+        f'<span style="color: {colour}; font-weight: 600;">{cat}</span> '
+        f'<span style="color: #6B6B8D;">{definition}</span></p>',
+        unsafe_allow_html=True,
+    )
+
+st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
+
+# ============================================================
+# SECTION 4: Negative Review Analysis
 # ============================================================
 st.header("Negative Review Analysis")
 st.markdown(f"*Based on {len(anima_neg)} reviews with 1-2 stars in our database*")
