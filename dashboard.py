@@ -279,7 +279,7 @@ if anima_stats:
     fig.update_yaxes(gridcolor="#EDE9FE", linecolor="#E5E1F5")
     st.plotly_chart(fig, use_container_width=True)
 
-st.divider()
+st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
 
 # ============================================================
 # SECTION 2: Trends Over Time
@@ -365,7 +365,7 @@ if not monthly_stars.empty:
     )
     st.plotly_chart(fig, use_container_width=True)
 
-st.divider()
+st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
 
 # ============================================================
 # SECTION 3: Negative Review Analysis
@@ -457,7 +457,7 @@ if not cat_monthly.empty:
         )
         st.plotly_chart(fig, use_container_width=True)
 
-st.divider()
+st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
 
 # ============================================================
 # SECTION 4: Recent Negative Reviews
@@ -484,7 +484,7 @@ st.dataframe(
     height=500,
 )
 
-st.divider()
+st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
 
 # ============================================================
 # SECTION 5: Review Explorer
