@@ -19,7 +19,14 @@
       "Read(//Users/stevejobs/bin/**)",
       "Read(//Applications/**)",
       "Bash(/opt/homebrew/bin/gh auth:*)",
-      "Bash(/opt/homebrew/bin/gh repo:*)"
+      "Bash(/opt/homebrew/bin/gh repo:*)",
+      "Bash(/opt/homebrew/bin/brew install:*)",
+      "Bash(/opt/homebrew/bin/pdftoppm -h)",
+      "Bash(export PATH=\"/opt/homebrew/bin:$PATH\")",
+      "Bash(pdftoppm -png -r 200 -f 1 -l 3 \"/Users/stevejobs/Desktop/Work Proj/Anima/FINAL PDFs/1 Joseph_Cherukara_Anima_Founders_Associate_Questions.pdf\" /tmp/pdf1_page)",
+      "Read(//private/tmp/**)",
+      "Bash(pdftoppm -png -r 200 -f 1 -l 3 \"/Users/stevejobs/Desktop/Work Proj/Anima/FINAL PDFs/3 Anima_Customer_Feedback.pdf\" /tmp/pdf3_page)",
+      "Bash(ls /tmp/pdf3_page*)"
     ]
   }
 }

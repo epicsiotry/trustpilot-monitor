@@ -21,6 +21,91 @@ st.set_page_config(
 
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "reviews.db")
 
+# --- Anima Brand Styling ---
+st.markdown("""
+<style>
+    /* Clean Anima brand typography */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    html, body, [class*="css"] {
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* Main title styling */
+    h1 {
+        color: #1A1A2E !important;
+        font-weight: 700 !important;
+        letter-spacing: -0.02em !important;
+    }
+
+    /* Section headers in Anima purple */
+    h2 {
+        color: #7C3AED !important;
+        font-weight: 600 !important;
+        letter-spacing: -0.01em !important;
+        border-bottom: 2px solid #EDE9FE !important;
+        padding-bottom: 0.4rem !important;
+    }
+
+    h3 {
+        color: #4A4A6A !important;
+        font-weight: 500 !important;
+    }
+
+    /* Metric cards */
+    [data-testid="stMetric"] {
+        background: linear-gradient(135deg, #F8F7FF 0%, #EDE9FE 100%);
+        border: 1px solid #E5E1F5;
+        border-radius: 12px;
+        padding: 1rem 1.2rem;
+        box-shadow: 0 1px 3px rgba(124, 58, 237, 0.06);
+    }
+
+    [data-testid="stMetricLabel"] {
+        color: #6B6B8D !important;
+        font-size: 0.85rem !important;
+        font-weight: 500 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.04em !important;
+    }
+
+    [data-testid="stMetricValue"] {
+        color: #1A1A2E !important;
+        font-weight: 700 !important;
+    }
+
+    /* Dividers */
+    hr {
+        border-color: #EDE9FE !important;
+    }
+
+    /* Dataframe styling */
+    [data-testid="stDataFrame"] {
+        border: 1px solid #E5E1F5;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    /* Sidebar and inputs */
+    .stSelectbox, .stMultiSelect, .stTextInput {
+        border-radius: 8px;
+    }
+
+    /* Password page centering */
+    .password-container {
+        max-width: 400px;
+        margin: 10vh auto;
+        text-align: center;
+    }
+
+    /* Plotly chart containers */
+    [data-testid="stPlotlyChart"] {
+        border-radius: 12px;
+        overflow: hidden;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 # --- Password Protection ---
 def check_password():
     """Simple password gate. Set the password in .streamlit/secrets.toml"""
@@ -32,8 +117,12 @@ def check_password():
     if st.session_state.authenticated:
         return True
 
-    st.markdown("## Anima Trustpilot Sentiment Monitor")
-    st.markdown("*Enter the password to view the dashboard.*")
+    st.markdown("""
+    <div style="text-align: center; margin-top: 8vh;">
+        <p style="font-size: 2rem; font-weight: 700; color: #1A1A2E; letter-spacing: -0.03em; margin-bottom: 0.3rem;">Trustpilot Sentiment Monitor</p>
+        <p style="color: #6B6B8D; font-size: 1rem;">Enter the password to continue</p>
+    </div>
+    """, unsafe_allow_html=True)
     password = st.text_input("Password", type="password")
     if password:
         if password == correct_password:
@@ -47,13 +136,13 @@ if not check_password():
     st.stop()
 
 CATEGORY_COLORS = {
-    "Interface and technical problems": "#E53E3E",
-    "Questionnaire burden": "#DD6B20",
-    "System unavailability": "#D69E2E",
-    "Digital exclusion": "#805AD5",
-    "Triage misdirection": "#3182CE",
-    "Practice capacity": "#718096",
-    "Other": "#A0AEC0",
+    "Interface and technical problems": "#7C3AED",
+    "Questionnaire burden": "#A855F7",
+    "System unavailability": "#3B82F6",
+    "Digital exclusion": "#EC4899",
+    "Triage misdirection": "#6366F1",
+    "Practice capacity": "#94A3B8",
+    "Other": "#CBD5E1",
 }
 
 CATEGORY_ORDER = [
@@ -105,16 +194,17 @@ anima_neg = anima[anima["rating"] <= 2]
 
 # --- Header ---
 st.markdown("""
-# Anima Trustpilot Sentiment Monitor
-**Automated analysis of patient feedback for [Anima Health](https://animahealth.com)**
-
-This dashboard scrapes Trustpilot reviews, auto-categorises negative feedback into
-seven categories, tracks sentiment over time, and compares against competitors.
-
-*Data refreshed from Trustpilot*
-
----
-""")
+<div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.5rem;">
+    <span style="font-size: 2.2rem; font-weight: 700; color: #1A1A2E; letter-spacing: -0.03em;">Trustpilot Sentiment Monitor</span>
+</div>
+<p style="color: #6B6B8D; font-size: 1.05rem; margin-top: 0; margin-bottom: 0.3rem;">
+    Automated analysis of patient feedback for <a href="https://animahealth.com" style="color: #7C3AED; text-decoration: none; font-weight: 500;">Anima Health</a>
+</p>
+<p style="color: #94A3B8; font-size: 0.85rem; margin-top: 0;">
+    Reviews scraped daily from Trustpilot &middot; Negative feedback auto-categorised into seven complaint frameworks
+</p>
+<hr style="border: none; border-top: 2px solid #EDE9FE; margin-top: 1rem;">
+""", unsafe_allow_html=True)
 
 # ============================================================
 # SECTION 1: Overview Panel
@@ -181,7 +271,12 @@ if anima_stats:
         yaxis_title="Number of Reviews",
         xaxis_title="",
         height=350,
+        plot_bgcolor="white",
+        paper_bgcolor="white",
+        font=dict(family="Inter, sans-serif", color="#4A4A6A"),
     )
+    fig.update_xaxes(gridcolor="#EDE9FE", linecolor="#E5E1F5")
+    fig.update_yaxes(gridcolor="#EDE9FE", linecolor="#E5E1F5")
     st.plotly_chart(fig, use_container_width=True)
 
 st.divider()
@@ -215,7 +310,7 @@ with col_t1:
             xaxis_title="Month",
             height=350,
         )
-        fig.update_traces(line_color="#6C63FF")
+        fig.update_traces(line_color="#7C3AED")
         st.plotly_chart(fig, use_container_width=True)
 
 with col_t2:
@@ -232,7 +327,7 @@ with col_t2:
             xaxis_title="Month",
             height=350,
         )
-        fig.update_traces(marker_color="#6C63FF")
+        fig.update_traces(marker_color="#7C3AED")
         st.plotly_chart(fig, use_container_width=True)
 
 # Star distribution over time
