@@ -123,8 +123,6 @@ st.header("Overview")
 
 # Get stats from scrape log (these are accurate totals from Trustpilot)
 anima_stats = get_latest_stats(scrape_log, "anima")
-econsult_stats = get_latest_stats(scrape_log, "econsult")
-patchs_stats = get_latest_stats(scrape_log, "patchs")
 
 # Metrics row
 col1, col2, col3, col4 = st.columns(4)
@@ -147,92 +145,43 @@ with col4:
     )
     st.metric("5-Star Reviews", f"{five_star_pct:.0f}%")
 
-# Star distribution & competitor comparison side by side
-col_left, col_right = st.columns(2)
-
-with col_left:
-    st.subheader("Star Distribution")
-    if anima_stats:
-        star_data = pd.DataFrame({
-            "Stars": ["5 star", "4 star", "3 star", "2 star", "1 star"],
-            "Count": [
-                anima_stats.get("five", 0),
-                anima_stats.get("four", 0),
-                anima_stats.get("three", 0),
-                anima_stats.get("two", 0),
-                anima_stats.get("one", 0),
-            ],
-        })
-        star_data["Percentage"] = (
-            star_data["Count"] / star_data["Count"].sum() * 100
-        ).round(1)
-        fig = px.bar(
-            star_data,
-            x="Stars",
-            y="Count",
-            text="Percentage",
-            color="Stars",
-            color_discrete_map={
-                "5 star": "#00B67A",
-                "4 star": "#73CF11",
-                "3 star": "#FFCE00",
-                "2 star": "#FF8622",
-                "1 star": "#FF3722",
-            },
-        )
-        fig.update_traces(texttemplate="%{text}%", textposition="outside")
-        fig.update_layout(
-            showlegend=False,
-            yaxis_title="Number of Reviews",
-            xaxis_title="",
-            height=350,
-        )
-        st.plotly_chart(fig, use_container_width=True)
-
-with col_right:
-    st.subheader("Competitor Comparison")
-    comp_data = pd.DataFrame({
-        "Company": ["Anima", "PATCHS", "eConsult"],
-        "Rating": [
-            anima_stats.get("rating", 0),
-            patchs_stats.get("rating", 0),
-            econsult_stats.get("rating", 0),
-        ],
-        "Reviews": [
-            anima_stats.get("total", 0),
-            patchs_stats.get("total", 0),
-            econsult_stats.get("total", 0),
+# Star distribution
+st.subheader("Star Distribution")
+if anima_stats:
+    star_data = pd.DataFrame({
+        "Stars": ["5 star", "4 star", "3 star", "2 star", "1 star"],
+        "Count": [
+            anima_stats.get("five", 0),
+            anima_stats.get("four", 0),
+            anima_stats.get("three", 0),
+            anima_stats.get("two", 0),
+            anima_stats.get("one", 0),
         ],
     })
+    star_data["Percentage"] = (
+        star_data["Count"] / star_data["Count"].sum() * 100
+    ).round(1)
     fig = px.bar(
-        comp_data,
-        x="Company",
-        y="Rating",
-        text="Rating",
-        color="Company",
+        star_data,
+        x="Stars",
+        y="Count",
+        text="Percentage",
+        color="Stars",
         color_discrete_map={
-            "Anima": "#6C63FF",
-            "PATCHS": "#00B67A",
-            "eConsult": "#FF3722",
+            "5 star": "#00B67A",
+            "4 star": "#73CF11",
+            "3 star": "#FFCE00",
+            "2 star": "#FF8622",
+            "1 star": "#FF3722",
         },
     )
-    fig.update_traces(texttemplate="%{text}/5", textposition="outside")
+    fig.update_traces(texttemplate="%{text}%", textposition="outside")
     fig.update_layout(
         showlegend=False,
-        yaxis_title="Trustpilot Rating",
-        yaxis_range=[0, 5.5],
+        yaxis_title="Number of Reviews",
         xaxis_title="",
         height=350,
     )
-    # Add review count annotations
-    for i, row in comp_data.iterrows():
-        fig.add_annotation(
-            x=row["Company"],
-            y=0.3,
-            text=f"{row['Reviews']:,} reviews",
-            showarrow=False,
-            font=dict(size=11, color="white"),
-        )
     st.plotly_chart(fig, use_container_width=True)
 
 st.divider()
@@ -450,7 +399,7 @@ st.header("Review Explorer")
 col_f1, col_f2, col_f3, col_f4 = st.columns(4)
 
 with col_f1:
-    company_filter = st.selectbox("Company", ["anima", "econsult", "patchs"])
+    company_filter = st.selectbox("Company", ["anima"])
 with col_f2:
     rating_filter = st.multiselect("Star Rating", [1, 2, 3, 4, 5], default=[1, 2, 3, 4, 5])
 with col_f3:
