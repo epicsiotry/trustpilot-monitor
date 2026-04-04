@@ -33,7 +33,7 @@ st.markdown("""
 
     /* Tighten default Streamlit block spacing */
     .block-container {
-        padding-top: 2rem !important;
+        padding-top: 3rem !important;
         padding-bottom: 2rem !important;
         max-width: 1100px !important;
     }
